@@ -615,7 +615,8 @@ def _get_import_type(module):
         #NOTE(imelnikov): python 3 returns None for path of builtin
         # modules, like sys or builtin; they are definitely stdlib
         return cache_type('stdlib')
-    if 'site-packages' in path or 'dist-packages' in path:
+    if ('site-packages' in path or 'dist-packages' in path or
+            os.path.join(sys.prefix, 'src') in path):
         return cache_type('third-party')
     if (path.startswith(stdlib_path_prefix) or
             path.startswith(stdlib_path_prefix_virt) or

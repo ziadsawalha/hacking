@@ -578,9 +578,14 @@ def hacking_import_rules(logical_line, physical_line, filename):
                       " '%s' is a relative import" % logical_line)
 
 
-# Get the location of a known stdlib module
-_, p, _ = imp.find_module('imp')
+# Get the location of a known stdlib module that gets put in a vitualenv
+_, p, _ = imp.find_module('os')
+stdlib_path_prefix_virt = os.path.dirname(p)
+
+# Get the location of a known stdlib module that may not be in a virtualenv
+_, p, _ = imp.find_module('logging')
 stdlib_path_prefix = os.path.dirname(p)
+
 module_cache = dict()
 
 
@@ -613,6 +618,7 @@ def _get_import_type(module):
     if 'site-packages' in path or 'dist-packages' in path:
         return cache_type('third-party')
     if (path.startswith(stdlib_path_prefix) or
+            path.startswith(stdlib_path_prefix_virt) or
             path.startswith(sys.prefix) or
             path == module):
         return cache_type('stdlib')
